@@ -29,12 +29,16 @@ NC='\033[0m'
 # ========= 检测 80 端口 ==========
 check_port_80() {
     echo -e "${YELLOW}[INFO] 检查 80 端口是否被占用...${NC}"
-    if lsof -i:80 >/dev/null; then
-        echo -e "${RED}[ERROR] 80 端口已被占用，请停止相关服务后再试${NC}"
+    local listen_info
+    listen_info=$(sudo ss -tulpn | grep ':80 .*LISTEN')
+    if [ -n "$listen_info" ]; then
+        echo -e "${RED}[ERROR] 80 端口已被监听，详情：${NC}"
+        echo "$listen_info"
         exit 1
     fi
     echo -e "${GREEN}[OK] 80 端口可用${NC}"
 }
+
 
 # ========= 安装 Certbot ==========
 install_certbot() {
