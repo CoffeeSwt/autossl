@@ -15,6 +15,9 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+# ========= 把相对路径转成绝对路径 ==========
+ABS_WWW_DIR=$(realpath "$WWW_DIR")
+
 # ========= 检测 80 端口 ==========
 check_port_80() {
     echo -e "${YELLOW}[INFO] 检查 80 端口是否被占用...${NC}"
@@ -59,7 +62,7 @@ load_domains() {
 create_www_dirs() {
     echo -e "${YELLOW}[INFO] 创建网站根目录...${NC}"
     for domain in "${DOMAINS[@]}"; do
-        local dir="$WWW_DIR/$domain"
+        local dir="$ABS_WWW_DIR/$domain"
         if [ ! -d "$dir" ]; then
             mkdir -p "$dir"
             echo -e "${GREEN}[OK] 已创建目录 $dir${NC}"
@@ -136,7 +139,7 @@ server {
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
 
-    root $WWW_DIR/$domain;
+    root $ABS_WWW_DIR/$domain;
     index index.html;
 
     location / {
